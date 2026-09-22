@@ -138,6 +138,9 @@ pub struct RustMasterApp {
     // Navigations-Zustand (Tabs)
     selected_tab: TabPage,
 
+    // [GUI-ELEMENT: ZOOM_CONTROLS - Desktop-Skalierung von 25% bis 300%]
+    zoom_percent: i32,
+
     // [RUST-KONZEPT: 01_OWNERSHIP_MOVE - Interaktives Anschauungsbeispiel]
     owned_token: Option<String>,
     token_history: Vec<String>,
@@ -201,6 +204,7 @@ impl Default for RustMasterApp {
 
         Self {
             selected_tab: TabPage::Overview,
+            zoom_percent: 100,
 
             owned_token: Some(String::from("Geheimes_Besitz_Token_#42")),
             token_history: vec![String::from("Ursprünglicher Speicherbesitzer: `main_app`")],
@@ -303,6 +307,10 @@ impl RustMasterApp {
 
 impl eframe::App for RustMasterApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // [GUI-ELEMENT: ZOOM_CONTROLS - Globale UI-Skalierung anwenden]
+        // Stellt die Pixels-per-Point Skalierung stufenlos auf 25% bis 300% ein.
+        ctx.set_zoom_factor(self.zoom_percent as f32 / 100.0);
+
         // [RUST-KONZEPT: 08_CONCURRENCY_CHANNELS - Empfang von Thread-Nachrichten ohne UI-Freeze]
         // `try_recv()` ist non-blocking! Verhindert, dass der UI-Rendering-Thread blockiert.
         while let Ok(msg) = self.job_receiver.try_recv() {
@@ -331,6 +339,42 @@ impl eframe::App for RustMasterApp {
                     if ui.button("ℹ️ Systeminfo / Über").clicked() {
                         self.demo_show_modal = true;
                     }
+                    ui.separator();
+
+                    // [GUI-ELEMENT: ZOOM_CONTROLS - Hereinzoomen (max. 300%)]
+                    let can_zoom_in = self.zoom_percent < 300;
+                    if ui.add_enabled(can_zoom_in, egui::Button::new("➕"))
+                        .on_hover_text("Hereinzoomen (+25%, bis max. 300%)")
+                        .clicked()
+                    {
+                        self.zoom_percent = (self.zoom_percent + 25).min(300);
+                        audit_log!(self.system_logs, "Zoom vergrößert auf {}%", self.zoom_percent);
+                    }
+
+                    // [GUI-ELEMENT: ZOOM_CONTROLS - Zoom zurücksetzen (100%)]
+                    if ui.button("🔄 100%")
+                        .on_hover_text("Zoom auf Standardgröße (100%) zurücksetzen")
+                        .clicked()
+                    {
+                        self.zoom_percent = 100;
+                        audit_log!(self.system_logs, "Zoom zurückgesetzt auf 100%");
+                    }
+
+                    // [GUI-ELEMENT: ZOOM_CONTROLS - Herauszoomen (min. 25%)]
+                    let can_zoom_out = self.zoom_percent > 25;
+                    if ui.add_enabled(can_zoom_out, egui::Button::new("➖"))
+                        .on_hover_text("Herauszoomen (-25%, bis min. 25%)")
+                        .clicked()
+                    {
+                        self.zoom_percent = (self.zoom_percent - 25).max(25);
+                        audit_log!(self.system_logs, "Zoom verkleinert auf {}%", self.zoom_percent);
+                    }
+
+                    // Anzeige der aktuellen Zoomstufe
+                    ui.monospace(RichText::new(format!("{}%", self.zoom_percent)).strong());
+                    ui.label(RichText::new("🔍 Zoom:").small());
+                    ui.separator();
+
                     ui.label(RichText::new("eframe 0.29 | Safe Rust").small());
                 });
             });
