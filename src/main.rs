@@ -411,15 +411,16 @@ impl eframe::App for RustMasterApp {
         });
 
         // [GUI-ELEMENT: MODAL_WINDOW_DIALOG - Modaler Pop-Up-Dialog]
-        // [RUST-KONZEPT: 02_BORROWING_MUTABILITY - Vermeidung von E0500 durch lokale Entkopplung]
-        // Würde man `.open(&mut self.demo_show_modal)` übergeben und in der Closure
-        // gleichzeitig `self.demo_show_modal = false;` aufrufen, schlägt der Borrow-Checker an (E0500):
-        // `self` wäre gleichzeitig exklusiv geliehen und innerhalb der Closure referenziert.
-        // Die idiomatische Lösung in Rust: Eine lokale Hilfsvariable verwenden und danach synchronisieren.
+        // [RUST-KONZEPT: 02_BORROWING_MUTABILITY - Vermeidung von E0499 durch disjunkte Zustände]
+        // In Rust darf eine Variable niemals zweimal gleichzeitig veränderlich ausgeliehen werden (`&mut`).
+        // Da `.open(&mut is_open)` die Referenz speichert und die Closure den Schließen-Button bedient,
+        // trennen wir die beiden Aktionen in zwei disjunkte Variablen (`is_open` und `close_requested`).
         if self.demo_show_modal {
-            let mut show_modal = self.demo_show_modal;
+            let mut is_open = true;
+            let mut close_requested = false;
+
             egui::Window::new("Rust Sprach- & Architektur-Übersicht")
-                .open(&mut show_modal)
+                .open(&mut is_open)
                 .resizable(false)
                 .collapsible(false)
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
@@ -433,10 +434,12 @@ impl eframe::App for RustMasterApp {
                     ui.label("• Immediate-Mode-GUI (egui): UI ist eine direkte Funktion des aktuellen Status!");
                     ui.add_space(10.0);
                     if ui.button("Verstanden & Schließen").clicked() {
-                        show_modal = false;
+                        close_requested = true;
                     }
                 });
-            self.demo_show_modal = show_modal;
+
+            // Beide Schließ-Möglichkeiten zusammenführen (X-Button oder Schließen-Button)
+            self.demo_show_modal = is_open && !close_requested;
         }
     }
 }
