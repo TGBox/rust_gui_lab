@@ -331,19 +331,19 @@ impl eframe::App for RustMasterApp {
         egui::TopBottomPanel::top("header_panel").show(ctx, |ui| {
             ui.add_space(4.0);
             ui.horizontal(|ui| {
-                ui.heading(RichText::new("🦀 Rust Desktop GUI- & Sprach-Lernlabor").strong().color(Color32::from_rgb(230, 90, 40)));
+                ui.heading(RichText::new("Rust Desktop GUI- & Sprach-Lernlabor").strong().color(Color32::from_rgb(230, 90, 40)));
                 ui.separator();
                 ui.label(RichText::new("Interaktive Exploration von Sprachkonzepten & Desktop-Widgets").italics());
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if ui.button("ℹ️ Systeminfo / Über").clicked() {
+                    if ui.button("Info / Über").clicked() {
                         self.demo_show_modal = true;
                     }
                     ui.separator();
 
                     // [GUI-ELEMENT: ZOOM_CONTROLS - Hereinzoomen (max. 300%)]
                     let can_zoom_in = self.zoom_percent < 300;
-                    if ui.add_enabled(can_zoom_in, egui::Button::new("➕"))
+                    if ui.add_enabled(can_zoom_in, egui::Button::new(" + "))
                         .on_hover_text("Hereinzoomen (+25%, bis max. 300%)")
                         .clicked()
                     {
@@ -352,7 +352,7 @@ impl eframe::App for RustMasterApp {
                     }
 
                     // [GUI-ELEMENT: ZOOM_CONTROLS - Zoom zurücksetzen (100%)]
-                    if ui.button("🔄 100%")
+                    if ui.button("100%")
                         .on_hover_text("Zoom auf Standardgröße (100%) zurücksetzen")
                         .clicked()
                     {
@@ -362,7 +362,7 @@ impl eframe::App for RustMasterApp {
 
                     // [GUI-ELEMENT: ZOOM_CONTROLS - Herauszoomen (min. 25%)]
                     let can_zoom_out = self.zoom_percent > 25;
-                    if ui.add_enabled(can_zoom_out, egui::Button::new("➖"))
+                    if ui.add_enabled(can_zoom_out, egui::Button::new(" - "))
                         .on_hover_text("Herauszoomen (-25%, bis min. 25%)")
                         .clicked()
                     {
@@ -372,7 +372,7 @@ impl eframe::App for RustMasterApp {
 
                     // Anzeige der aktuellen Zoomstufe
                     ui.monospace(RichText::new(format!("{}%", self.zoom_percent)).strong());
-                    ui.label(RichText::new("🔍 Zoom:").small());
+                    ui.label(RichText::new("Zoom:").small());
                     ui.separator();
 
                     ui.label(RichText::new("eframe 0.29 | Safe Rust").small());
@@ -413,15 +413,15 @@ impl eframe::App for RustMasterApp {
 
                 egui::ScrollArea::vertical().show(ui, |ui| {
                     let nav_items = [
-                        (TabPage::Overview, "🧭 Übersicht & Guide"),
-                        (TabPage::OwnershipAndBorrowing, "📦 Ownership & Borrowing"),
-                        (TabPage::EnumsAndMatching, "🧬 Enums, Structs & Match"),
-                        (TabPage::TraitsAndGenerics, "⚡ Traits & Generics"),
-                        (TabPage::OptionResultAndErrors, "🛡️ Option, Result & Fehler"),
-                        (TabPage::ConcurrencyAndSmartPointers, "🧵 Concurrency & Pointer"),
-                        (TabPage::IteratorsAndClosures, "🔄 Iteratoren & Closures"),
-                        (TabPage::LifetimesAndUnsafe, "🧠 Lifetimes & Unsafe"),
-                        (TabPage::GuiElementGallery, "🎨 Alle UI-Elemente & Canvas"),
+                        (TabPage::Overview, "01. Übersicht & Guide"),
+                        (TabPage::OwnershipAndBorrowing, "02. Ownership & Borrowing"),
+                        (TabPage::EnumsAndMatching, "03. Enums, Structs & Match"),
+                        (TabPage::TraitsAndGenerics, "04. Traits & Generics"),
+                        (TabPage::OptionResultAndErrors, "05. Option, Result & Fehler"),
+                        (TabPage::ConcurrencyAndSmartPointers, "06. Concurrency & Pointer"),
+                        (TabPage::IteratorsAndClosures, "07. Iteratoren & Closures"),
+                        (TabPage::LifetimesAndUnsafe, "08. Lifetimes & Unsafe"),
+                        (TabPage::GuiElementGallery, "09. Alle UI-Elemente & Canvas"),
                     ];
 
                     for (page, label) in nav_items {
@@ -455,10 +455,6 @@ impl eframe::App for RustMasterApp {
         });
 
         // [GUI-ELEMENT: MODAL_WINDOW_DIALOG - Modaler Pop-Up-Dialog]
-        // [RUST-KONZEPT: 02_BORROWING_MUTABILITY - Vermeidung von E0499 durch disjunkte Zustände]
-        // In Rust darf eine Variable niemals zweimal gleichzeitig veränderlich ausgeliehen werden (`&mut`).
-        // Da `.open(&mut is_open)` die Referenz speichert und die Closure den Schließen-Button bedient,
-        // trennen wir die beiden Aktionen in zwei disjunkte Variablen (`is_open` und `close_requested`).
         if self.demo_show_modal {
             let mut is_open = true;
             let mut close_requested = false;
@@ -482,7 +478,6 @@ impl eframe::App for RustMasterApp {
                     }
                 });
 
-            // Beide Schließ-Möglichkeiten zusammenführen (X-Button oder Schließen-Button)
             self.demo_show_modal = is_open && !close_requested;
         }
     }
@@ -499,7 +494,7 @@ impl RustMasterApp {
         ui.add_space(12.0);
 
         // [GUI-ELEMENT: COLLAPSING_HEADER_ACCORDION]
-        ui.collapsing("🔍 So navigieren Sie durch den Quellcode", |ui| {
+        ui.collapsing("So navigieren Sie durch den Quellcode", |ui| {
             ui.label(RichText::new("Suchen Sie global in Ihrer IDE nach folgendem Präfix:").strong());
             ui.monospace("[RUST-KONZEPT:  -> Springt zu allen 11 Sprachkonzepten");
             ui.monospace("[GUI-ELEMENT:   -> Springt zu allen verwendeten Desktop-Widgets");
@@ -529,7 +524,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_ownership(&mut self, ui: &mut egui::Ui) {
-        ui.heading("📦 1. Ownership & 2. Borrowing (Besitz & Ausleihe)");
+        ui.heading("1. Ownership & 2. Borrowing (Besitz & Ausleihe)");
         ui.label(
             "Rust verzichtet auf einen Garbage Collector. Speicher wird statisch über das \
             Ownership-Modell verwaltet. Jeder Wert hat genau EINEN Besitzer (Owner). Wenn der \
@@ -560,7 +555,7 @@ impl RustMasterApp {
 
             ui.horizontal(|ui| {
                 // [GUI-ELEMENT: BUTTONS]
-                if ui.button("💥 Ownership transferieren (Move simulieren via .take())").clicked() {
+                if ui.button("Ownership transferieren (Move via .take())").clicked() {
                     // [RUST-KONZEPT: 01_OWNERSHIP_MOVE - Option::take() entzieht den Besitz]
                     if let Some(token) = self.owned_token.take() {
                         let transferred_msg = format!("Besitz übertragen auf lokalen Scope: '{}'", token);
@@ -569,14 +564,14 @@ impl RustMasterApp {
                     }
                 }
 
-                if ui.button("🔄 Neuen Besitz instanziieren (Allokation auf dem Heap)").clicked() {
+                if ui.button("Neuen Besitz instanziieren (Heap-Allokation)").clicked() {
                     let new_token = format!("Neuer_Besitz_Wert_#{}", self.token_history.len() + 1);
                     self.owned_token = Some(new_token);
                     self.token_history.push("Neuer Wert im Heap allokiert und Besitzer zugewiesen.".to_string());
                 }
             });
 
-            ui.collapsing("📜 Protokoll der Besitzwechsel", |ui| {
+            ui.collapsing("Protokoll der Besitzwechsel", |ui| {
                 for entry in &self.token_history {
                     ui.label(format!("• {}", entry));
                 }
@@ -598,7 +593,7 @@ impl RustMasterApp {
             ui.label(format!("Aktueller Zählerstand: {}", self.counter_value));
 
             ui.horizontal(|ui| {
-                if ui.button("➕ &mut self.counter_value mutieren (+5)").clicked() {
+                if ui.button("&mut self.counter_value mutieren (+5)").clicked() {
                     // [RUST-KONZEPT: 02_BORROWING_MUTABILITY - Exklusive veränderliche Referenz]
                     fn mutate_counter(val_ref: &mut i32) {
                         *val_ref += 5; // Dereferenzierung und Mutation
@@ -607,7 +602,7 @@ impl RustMasterApp {
                     self.borrow_log.push(format!("Mutiert via &mut: Neuer Wert = {}", self.counter_value));
                 }
 
-                if ui.button("👀 &self.counter_value unveränderlich lesen").clicked() {
+                if ui.button("&self.counter_value unveränderlich lesen").clicked() {
                     // [RUST-KONZEPT: 02_BORROWING_MUTABILITY - Geteilte Lese-Referenz]
                     fn read_counter(val_ref: &i32) -> String {
                         format!("Gelesen via &i32: Wert beträgt {}", *val_ref)
@@ -617,7 +612,7 @@ impl RustMasterApp {
                 }
             });
 
-            ui.collapsing("📜 Borrow-Logbuch", |ui| {
+            ui.collapsing("Borrow-Logbuch", |ui| {
                 for item in self.borrow_log.iter().rev().take(5) {
                     ui.label(format!("• {}", item));
                 }
@@ -626,7 +621,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_enums(&mut self, ui: &mut egui::Ui) {
-        ui.heading("🧬 4. Enums, Structs & Pattern Matching");
+        ui.heading("4. Enums, Structs & Pattern Matching");
         ui.label(
             "Rust-Enums sind mächtige algebraische Datentypen (Tagged Unions). \
             Das `match`-Konstrukt erzwingt Vollständigkeit (Exhaustiveness): Jeder mögliche \
@@ -670,28 +665,28 @@ impl RustMasterApp {
             // [RUST-KONZEPT: 04_STRUCTS_ENUMS_MATCH - Exhaustive Match Demonstration]
             match &self.pipeline_state {
                 PipelineStatus::Uninitialized => {
-                    ui.colored_label(Color32::GRAY, "⚪ Pipeline ist nicht initialisiert.");
+                    ui.colored_label(Color32::GRAY, "• Pipeline ist nicht initialisiert.");
                 }
                 PipelineStatus::Pending { queue_position } => {
-                    ui.colored_label(Color32::LIGHT_YELLOW, format!("🟡 In Warteschlange an Position {}", queue_position));
+                    ui.colored_label(Color32::LIGHT_YELLOW, format!("• In Warteschlange an Position {}", queue_position));
                 }
                 PipelineStatus::Processing { current_step, progress } => {
-                    ui.colored_label(Color32::LIGHT_BLUE, format!("🔵 Verarbeite: {} ({:.0}%)", current_step, progress * 100.0));
+                    ui.colored_label(Color32::LIGHT_BLUE, format!("• Verarbeite: {} ({:.0}%)", current_step, progress * 100.0));
                     // [GUI-ELEMENT: SLIDER_PROGRESSBAR]
                     ui.add(egui::ProgressBar::new(*progress).show_percentage());
                 }
                 PipelineStatus::Success { hash, bytes_written } => {
-                    ui.colored_label(Color32::GREEN, format!("🟢 Erfolgreich! {} Bytes geschrieben. Prüfsumme: {}", bytes_written, hash));
+                    ui.colored_label(Color32::GREEN, format!("• Erfolgreich! {} Bytes geschrieben. Prüfsumme: {}", bytes_written, hash));
                 }
                 PipelineStatus::Failed { error_code, reason } => {
-                    ui.colored_label(Color32::RED, format!("🔴 Fehler [Code {}]: {}", error_code, reason));
+                    ui.colored_label(Color32::RED, format!("• Fehler [Code {}]: {}", error_code, reason));
                 }
             }
         });
     }
 
     fn render_tab_traits(&mut self, ui: &mut egui::Ui) {
-        ui.heading("⚡ 5. Traits, Generics & Polymorphie");
+        ui.heading("5. Traits, Generics & Polymorphie");
         ui.label(
             "Rust implementiert Polymorphie über Traits anstelle von klassischer Klassen-Vererbung. \
             Man unterscheidet zwischen statischem Dispatch (`impl Trait`, zur Compile-Zeit monomorphisiert) \
@@ -737,7 +732,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_errors(&mut self, ui: &mut egui::Ui) {
-        ui.heading("🛡️ 6. Option<T>, Result<T, E> & Der ?-Operator");
+        ui.heading("6. Option<T>, Result<T, E> & Der ?-Operator");
         ui.label(
             "In Rust gibt es weder Nullpointer noch ungeprüfte Exceptions (Exceptions). \
             Das Fehlen eines Wertes wird typisiert über `Option<T>` (`Some(T)` oder `None`) abgebildet. \
@@ -777,7 +772,7 @@ impl RustMasterApp {
         });
 
         ui.add_space(10.0);
-        ui.collapsing("💡 Wie der ?-Operator funktioniert", |ui| {
+        ui.collapsing("Wie der ?-Operator funktioniert", |ui| {
             ui.label("Der `?`-Operator prüft das Ergebnis eines `Result`:");
             ui.label("• Bei `Ok(val)`: Entpackt den Wert und führt die Funktion weiter.");
             ui.label("• Bei `Err(e)`: Beendet die aktuelle Funktion vorzeitig und gibt den Fehler zurück (`early return`).");
@@ -785,7 +780,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_concurrency(&mut self, ui: &mut egui::Ui) {
-        ui.heading("🧵 8. Concurrency & 7. Smart Pointer (Arc, Mutex, Box)");
+        ui.heading("7. Smart Pointer & 8. Concurrency (Arc, Mutex, Box)");
         ui.label(
             "Rust garantiert 'Fearless Concurrency': Wenn Ihr Code kompiliert, \
             haben Sie garantiert keine Data Races. Für geteilten, veränderlichen Zustand \
@@ -806,7 +801,7 @@ impl RustMasterApp {
             ui.horizontal(|ui| {
                 if is_running {
                     ui.add_enabled(false, egui::Button::new("Arbeit läuft bereits..."));
-                } else if ui.button("🚀 Hintergrund-Thread starten").clicked() {
+                } else if ui.button("Hintergrund-Thread starten").clicked() {
                     self.spawn_background_task();
                 }
 
@@ -829,7 +824,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_iterators(&mut self, ui: &mut egui::Ui) {
-        ui.heading("🔄 9. Closures & Iteratoren");
+        ui.heading("9. Closures & Iteratoren");
         ui.label(
             "Iteratoren in Rust sind 'lazy' (träge): Sie berechnen erst dann Werte, \
             wenn sie konsumiert werden (z. B. via `.collect()` oder `.fold()`). \
@@ -870,7 +865,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_lifetimes_unsafe(&mut self, ui: &mut egui::Ui) {
-        ui.heading("🧠 3. Lifetimes & 11. Unsafe Rust");
+        ui.heading("3. Lifetimes & 11. Unsafe Rust");
         ui.add_space(10.0);
 
         ui.group(|ui| {
@@ -915,7 +910,7 @@ impl RustMasterApp {
     }
 
     fn render_tab_gui_gallery(&mut self, ui: &mut egui::Ui) {
-        ui.heading("🎨 Galerie aller gängigen UI-Elemente");
+        ui.heading("Galerie aller gängigen UI-Elemente");
         ui.label("Hier finden Sie alle klassischen Desktop-GUI-Elemente interaktiv eingebunden.");
         ui.add_space(10.0);
 
@@ -950,6 +945,22 @@ impl RustMasterApp {
                         ui.selectable_value(&mut self.demo_selected_option, "Rust Edition 2021".to_string(), "Rust Edition 2021");
                         ui.selectable_value(&mut self.demo_selected_option, "Rust Edition 2024".to_string(), "Rust Edition 2024");
                     });
+
+                ui.separator();
+                // [GUI-ELEMENT: CHECKBOX_TOGGLE - Checkbox & Kippschalter]
+                ui.label("Checkbox & Schalter:");
+                let checkbox_label = if self.demo_checkbox {
+                    "Checkbox (Status: Aktiviert)".to_owned()
+                } else {
+                    "Checkbox (Status: Deaktiviert)".to_owned()
+                };
+                ui.checkbox(&mut self.demo_checkbox, checkbox_label);
+                let toggle_label = if self.demo_toggle_switch {
+                    "Kippschalter: AN".to_owned()
+                } else {
+                    "Kippschalter: AUS".to_owned()
+                };
+                ui.toggle_value(&mut self.demo_toggle_switch, toggle_label);
 
                 ui.separator();
                 // [GUI-ELEMENT: COLOR_PICKER]
