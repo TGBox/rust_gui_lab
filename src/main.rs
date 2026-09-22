@@ -26,8 +26,7 @@
 //! 4. Führen Sie `cargo run` aus!
 //! =====================================================================================
 
-use eframe::egui::{self, Color32, Pos2, Rect, RichText, Stroke, Vec2};
-use std::fmt::{self, Display};
+use eframe::egui::{self, Color32, Pos2, RichText, Stroke, Vec2};
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -412,9 +411,15 @@ impl eframe::App for RustMasterApp {
         });
 
         // [GUI-ELEMENT: MODAL_WINDOW_DIALOG - Modaler Pop-Up-Dialog]
+        // [RUST-KONZEPT: 02_BORROWING_MUTABILITY - Vermeidung von E0500 durch lokale Entkopplung]
+        // Würde man `.open(&mut self.demo_show_modal)` übergeben und in der Closure
+        // gleichzeitig `self.demo_show_modal = false;` aufrufen, schlägt der Borrow-Checker an (E0500):
+        // `self` wäre gleichzeitig exklusiv geliehen und innerhalb der Closure referenziert.
+        // Die idiomatische Lösung in Rust: Eine lokale Hilfsvariable verwenden und danach synchronisieren.
         if self.demo_show_modal {
+            let mut show_modal = self.demo_show_modal;
             egui::Window::new("Rust Sprach- & Architektur-Übersicht")
-                .open(&mut self.demo_show_modal)
+                .open(&mut show_modal)
                 .resizable(false)
                 .collapsible(false)
                 .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
@@ -428,9 +433,10 @@ impl eframe::App for RustMasterApp {
                     ui.label("• Immediate-Mode-GUI (egui): UI ist eine direkte Funktion des aktuellen Status!");
                     ui.add_space(10.0);
                     if ui.button("Verstanden & Schließen").clicked() {
-                        self.demo_show_modal = false;
+                        show_modal = false;
                     }
                 });
+            self.demo_show_modal = show_modal;
         }
     }
 }
@@ -848,7 +854,7 @@ impl RustMasterApp {
             ui.add_space(6.0);
 
             // [RUST-KONZEPT: 11_UNSAFE_RUST - Sichere Kapselung eines Rohzeigers]
-            let mut val: u64 = 0xDEADBEEF;
+            let val: u64 = 0xDEADBEEF;
             let val_ptr: *const u64 = &val as *const u64;
 
             let inspected_val = unsafe {
@@ -927,14 +933,14 @@ impl RustMasterApp {
                 let rect = response.rect;
                 // Hintergrund zeichnen
                 painter.rect_filled(rect, 4.0, Color32::from_rgb(30, 30, 35));
-                painter.rect_stroke(rect, 4.0, Stroke::new(1.0, Color32::DARK_GRAY));
+                painter.rect_stroke(rect, 4.0_f32, Stroke::new(1.0_f32, Color32::DARK_GRAY));
 
                 // Dynamische Kreise und Formen basierend auf Slider und Farbwähler
                 let center = Pos2::new(rect.center().x, rect.center().y);
                 let radius = 10.0 + (self.demo_slider_val * 0.5);
 
                 painter.circle_filled(center, radius, self.demo_color);
-                painter.circle_stroke(center, radius + 5.0, Stroke::new(2.0, Color32::WHITE));
+                painter.circle_stroke(center, radius + 5.0, Stroke::new(2.0_f32, Color32::WHITE));
 
                 let text_pos = Pos2::new(rect.left() + 10.0, rect.bottom() - 20.0);
                 painter.text(
