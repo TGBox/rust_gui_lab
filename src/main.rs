@@ -138,7 +138,7 @@ pub struct RustMasterApp {
     // Navigations-Zustand (Tabs)
     selected_tab: TabPage,
 
-    // [GUI-ELEMENT: ZOOM_CONTROLS - Desktop-Skalierung von 25% bis 300%]
+    // [GUI-ELEMENT: ZOOM_CONTROLS - Desktop-Skalierung von 25% bis 200%]
     zoom_percent: i32,
 
     // [RUST-KONZEPT: 01_OWNERSHIP_MOVE - Interaktives Anschauungsbeispiel]
@@ -308,7 +308,7 @@ impl RustMasterApp {
 impl eframe::App for RustMasterApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // [GUI-ELEMENT: ZOOM_CONTROLS - Globale UI-Skalierung anwenden]
-        // Stellt die Pixels-per-Point Skalierung stufenlos auf 25% bis 300% ein.
+        // Stellt die Pixels-per-Point Skalierung stufenlos auf 25% bis 200% ein.
         ctx.set_zoom_factor(self.zoom_percent as f32 / 100.0);
 
         // [RUST-KONZEPT: 08_CONCURRENCY_CHANNELS - Empfang von Thread-Nachrichten ohne UI-Freeze]
@@ -341,13 +341,13 @@ impl eframe::App for RustMasterApp {
                     }
                     ui.separator();
 
-                    // [GUI-ELEMENT: ZOOM_CONTROLS - Hereinzoomen (max. 300%)]
-                    let can_zoom_in = self.zoom_percent < 300;
+                    // [GUI-ELEMENT: ZOOM_CONTROLS - Hereinzoomen (max. 200%)]
+                    let can_zoom_in = self.zoom_percent < 200;
                     if ui.add_enabled(can_zoom_in, egui::Button::new(" + "))
-                        .on_hover_text("Hereinzoomen (+25%, bis max. 300%)")
+                        .on_hover_text("Hereinzoomen (+25%, bis max. 200%)")
                         .clicked()
                     {
-                        self.zoom_percent = (self.zoom_percent + 25).min(300);
+                        self.zoom_percent = (self.zoom_percent + 25).min(200);
                         audit_log!(self.system_logs, "Zoom vergrößert auf {}%", self.zoom_percent);
                     }
 
@@ -397,7 +397,7 @@ impl eframe::App for RustMasterApp {
                 ui.label(format!("Letzter Log-Eintrag: {}", self.system_logs.last().cloned().unwrap_or_default()));
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    ui.label("Drücken Sie Strg+F und suchen Sie nach `[RUST-KONZEPT:` oder `[GUI-ELEMENT:`");
+                    ui.label("Drücken Sie in Ihrer IDE Strg+F und suchen Sie nach `[RUST-KONZEPT:` oder `[GUI-ELEMENT:`");
                 });
             });
         });
