@@ -5,3 +5,10 @@ edition = "2024"
 
 [dependencies]
 eframe = "0.29"
+
+[profile.release]
+opt-level = 3        # Maximale Geschwindigkeitsoptimierung
+lto = true           # Link-Time-Optimization über alle Crates hinweg
+codegen-units = 1    # Bessere Kompression & Optimierung (baut etwas länger)
+panic = "abort"      # Entfernt Panic-Unwind-Tabellen
+strip = true         # Entfernt alle Debug- und Symboltabellen aus der EXE

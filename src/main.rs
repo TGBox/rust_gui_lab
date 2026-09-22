@@ -26,6 +26,9 @@
 //! 4. Führen Sie `cargo run` aus!
 //! =====================================================================================
 
+// Verhindert das schwarze Terminal-Fenster im Release-Modus auf Windows:
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use eframe::egui::{self, Color32, Pos2, RichText, Stroke, Vec2};
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::{Arc, Mutex};
@@ -397,7 +400,7 @@ impl eframe::App for RustMasterApp {
                 ui.label(format!("Letzter Log-Eintrag: {}", self.system_logs.last().cloned().unwrap_or_default()));
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    ui.label("Drücken Sie in Ihrer IDE Strg+F und suchen Sie nach `[RUST-KONZEPT:` oder `[GUI-ELEMENT:`");
+                    ui.label("Drücken Sie Strg+F innerhalb der Codedatei und suchen Sie nach `[RUST-KONZEPT:` oder `[GUI-ELEMENT:`");
                 });
             });
         });
